@@ -2,6 +2,7 @@ import os, re, time
 from collections import OrderedDict
 from fileFormatCheck import *
 from vcdFileParse import *
+from datetime import datetime
 
 """
 SNJ402 vcd文件转换思路
@@ -39,7 +40,8 @@ SNJ402 vcd文件转换思路
 <<        938| ffff>> 10 00 // 00000007
 """
 startTime = time.time()
-
+start = datetime.now()
+print("\n" * 2 + start.strftime("%Y-%m-%d %H:%M:%S.%f"))
 # 客供pattern核对所需的正则
 # << time      | ADR >> PP PP // SITE
 re_fileFormatCommentCheck = re.compile(r"^\/\/")  # 开头两行注释
@@ -79,13 +81,12 @@ re_vcdFileParseList = [
 if __name__ == "__main__":
     # 获取当前目录
     workPath = os.getcwd()
-    # sourceFile = r"TPn_I2C_program_220302.txt"
     # sourceFile = r"TPn_I2C_Read_IDx.txt"
-    # outputFile = r"I2C_Read_IDx.pat"
-    sourceFile = r"I2C_program.txt"
-    outputFile = r"I2C_program.pat"
-    # sourceFile = r"I2C_trim_32K.txt"
-    # outputFile = r"I2C_trim_32K.pat"
+    # outputFile = r"TPn_I2C_Read_IDx.pat"
+    # sourceFile = r"I2C_program.txt"
+    # outputFile = r"I2C_program.pat"
+    sourceFile = r"I2C_trim_32K.txt"
+    outputFile = r"I2C_trim_32K.pat"
 
     # 校验vcd
     fileFormatCheckRegexDict = OrderedDict(
@@ -101,5 +102,7 @@ if __name__ == "__main__":
     sourceFile = os.path.join(workPath, sourceFile)
     # check_vcd_file(sourceFile, fileFormatCheckRegexDict)
     vcdFileParse(sourceFile, outputFile, re_vcdFileParseList)
+    end = datetime.now()
+    print("\n" + end.strftime("%Y-%m-%d %H:%M:%S.%f"))
     endTime = time.time()
-    print(f"时间总共花费: {round(endTime-startTime, 3)} S")
+    print(f"\n时间总共花费: {round(endTime-startTime, 3)} S")

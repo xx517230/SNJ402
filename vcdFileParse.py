@@ -25,7 +25,7 @@ def vcdFileParse(file, outputFile, regexList):
             if match:
                 timeStrOld = timeStr
                 timeStr = match.group(1)
-                pattern = match.group(2)
+                pattern = match.group(2).replace("z", "Z").replace("Z", "X")
                 comment = match.group(3)
                 time = int(timeStr) - int(timeStrOld)  # nS
                 outputFp.write(" *")
