@@ -69,7 +69,7 @@ re_fileFormatBodyCheck = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+(?://\s+.
 re_0TimingStatus = re.compile(
     r"^<<\s+\.+\|\s+\.+>>\s+([a-zA-Z0-9 ]+)//\s+([a-zA-Z0-9 ]+)$"
 )
-re_timingStatus = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+([01HXLZz ]+)(//.*)?$")
+re_timingStatus = re.compile(r"^<<\s+(\d+)\|\s+\w+>>\s+([01HXLZz ]+)(//.*)?$")
 
 re_vcdFileParseList = [
     re_timingStatus,
@@ -80,10 +80,10 @@ if __name__ == "__main__":
     # 获取当前目录
     workPath = os.getcwd()
     # sourceFile = r"TPn_I2C_program_220302.txt"
-    sourceFile = r"TPn_I2C_Read_IDx.txt"
+    # sourceFile = r"TPn_I2C_Read_IDx.txt"
     # outputFile = r"I2C_Read_IDx.pat"
-    # # sourceFile = r"I2C_program.txt"
-    # outputFile = r"I2C_program.pat"
+    sourceFile = r"I2C_program.txt"
+    outputFile = r"I2C_program.pat"
     # sourceFile = r"I2C_trim_32K.txt"
     # outputFile = r"I2C_trim_32K.pat"
 
@@ -100,6 +100,6 @@ if __name__ == "__main__":
     )
     sourceFile = os.path.join(workPath, sourceFile)
     # check_vcd_file(sourceFile, fileFormatCheckRegexDict)
-    vcdFileParse(sourceFile, re_vcdFileParseList)
+    vcdFileParse(sourceFile, outputFile, re_vcdFileParseList)
     endTime = time.time()
     print(f"时间总共花费: {round(endTime-startTime, 3)} S")
