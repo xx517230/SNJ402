@@ -113,3 +113,24 @@ OUTPUTFILE.close()
 # for key in timeDict.keys():
 #     print("%d=>%d" % (key, timeDict[key]))
 # SOURCEFILE.close()
+
+
+
+            if re_fileFormatBodyCheck.search(line):
+                fileFormatCheckRegexDict[re_fileFormatBodyCheck] += 1
+                continue
+            if re_fileFormatCommentCheck.search(line):
+                fileFormatCheckRegexDict[re_fileFormatCommentCheck] += 1
+                continue
+            if re_fileFormatItemCheck.search(line):
+                fileFormatCheckRegexDict[re_fileFormatItemCheck] += 1
+                continue
+            if re_fileFormatItemPinBodyCheck.search(line):
+                fileFormatCheckRegexDict[re_fileFormatItemPinBodyCheck] += 1
+                continue
+            if re_fileFormatItemBlankCheck.search(line):
+                fileFormatCheckRegexDict[re_fileFormatItemBlankCheck] += 1
+                continue
+            if re_fileFormatItemEndCheck.search(line):
+                fileFormatCheckRegexDict[re_fileFormatItemEndCheck] += 1
+                continue

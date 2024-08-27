@@ -1,4 +1,7 @@
 import os, re, time
+from collections import OrderedDict
+from fileFormatCheck import *
+from vcdFileParse import *
 
 """
 SNJ402 vcd文件转换思路
@@ -36,7 +39,6 @@ SNJ402 vcd文件转换思路
 <<        938| ffff>> 10 00 // 00000007
 """
 startTime = time.time()
-checkFlag = False
 
 # 客供pattern核对所需的正则
 # << time      | ADR >> PP PP // SITE
@@ -46,75 +48,58 @@ re_fileFormatItemCheck = re.compile(
     r"^<<\s+time\s+\|\s+ADR\s+>>\s+[a-zA-Z ]+\s+//\sSITE$"
 )
 # << ..........| ....>> AA BB // ..........
+# << ..........| ....>> ii ib // ..........
 re_fileFormatItemPinBodyCheck = re.compile(
     r"^<<\s+\.+\|\s+\.+>>\s+[a-zA-Z0-9_ ]+//\s+\.+$"
 )
 # << ..........| ....>> .. .. // ..........
 re_fileFormatItemBlankCheck = re.compile(r"^<<\s+\.+\|\s+\.+>>[ .]+//\s+\.+$")
 
-"""
-<< ..........| ....>> ii ib // ..........
-<< ..........| ....>> 11 XX // wait about 1060 clock enter SLEEP
-"""
+# << ..........| ....>> 11 XX // wait about 1060 clock enter SLEEP
 re_fileFormatItemEndCheck = re.compile(
     r"^<<\s+\.+\|\s+\.+>>\s+[a-zA-Z0-9 ]+//\s+[a-zA-Z0-9 ]+$"
-)  # ... ... ... end
+)
 
 # <<        438| xx00>> 00 00 // 00000003
-re_fileFormatBodyCheck = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+\s+//\s+.*?$")
+re_fileFormatBodyCheck = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+(?://\s+.*)?$")
 
 
-# 获取当前目录
-workPath = os.getcwd()
-# sourceFile = r"TPn_I2C_program_220302.txt"
-sourceFile = r"TPn_I2C_Read_IDx.txt"
-outputFile = r"I2C_Read_IDx.pat"
-# sourceFile = r"I2C_program.txt"
-# outputFile = r"I2C_program.pat"
-# sourceFile = r"I2C_trim_32K.txt"
-# outputFile = r"I2C_trim_32K.pat"
+# vcd 文件主体内容正则
+# << ..........| ....>> 11 XX // wait about 1060 clock enter SLEEP
+re_0TimingStatus = re.compile(
+    r"^<<\s+\.+\|\s+\.+>>\s+([a-zA-Z0-9 ]+)//\s+([a-zA-Z0-9 ]+)$"
+)
+re_timingStatus = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+([01HXLZz ]+)(//.*)?$")
 
-# 校验vcd
-fileFormatCheckRegexDict = {
-    re_fileFormatCommentCheck: 0,
-    re_fileFormatItemCheck: 0,
-    re_fileFormatItemPinBodyCheck: 0,
-    re_fileFormatItemBlankCheck: 0,
-    re_fileFormatItemEndCheck: 0,
-    re_fileFormatBodyCheck: 0,
-}
-if checkFlag:
-    SOURCEFILE = os.path.join(workPath, sourceFile)
+re_vcdFileParseList = [
+    re_timingStatus,
+    re_0TimingStatus,
+]
 
-    with open(SOURCEFILE, "r") as fp:
-        for lineCnt, line in enumerate(fp, start=1):
-            if re_fileFormatBodyCheck.search(line):
-                fileFormatCheckRegexDict[re_fileFormatBodyCheck] += 1
-                continue
-            if re_fileFormatCommentCheck.search(line):
-                fileFormatCheckRegexDict[re_fileFormatCommentCheck] += 1
-                continue
-            if re_fileFormatItemCheck.search(line):
-                fileFormatCheckRegexDict[re_fileFormatItemCheck] += 1
-                continue
-            if re_fileFormatItemPinBodyCheck.search(line):
-                fileFormatCheckRegexDict[re_fileFormatItemPinBodyCheck] += 1
-                continue
-            if re_fileFormatItemBlankCheck.search(line):
-                fileFormatCheckRegexDict[re_fileFormatItemBlankCheck] += 1
-                continue
-            if re_fileFormatItemEndCheck.search(line):
-                fileFormatCheckRegexDict[re_fileFormatItemEndCheck] += 1
-                continue
+if __name__ == "__main__":
+    # 获取当前目录
+    workPath = os.getcwd()
+    # sourceFile = r"TPn_I2C_program_220302.txt"
+    sourceFile = r"TPn_I2C_Read_IDx.txt"
+    # outputFile = r"I2C_Read_IDx.pat"
+    # # sourceFile = r"I2C_program.txt"
+    # outputFile = r"I2C_program.pat"
+    # sourceFile = r"I2C_trim_32K.txt"
+    # outputFile = r"I2C_trim_32K.pat"
 
-    for regex, count in fileFormatCheckRegexDict.items():
-        print(f"{regex} = {count}")
-
-
-SOURCEFILE = open(os.path.join(workPath, sourceFile), "r")
-OUTPUTFILE = open(os.path.join(workPath, outputFile), "w")
-
-
-
-endTime = time.time()
-print(f"时间总共花费: {round(endTime-startTime, 3)} S")
+    # 校验vcd
+    fileFormatCheckRegexDict = OrderedDict(
+        {
+            re_fileFormatBodyCheck: 0,  # 主要校验内容放第一个，减少判断
+            re_fileFormatCommentCheck: 0,
+            re_fileFormatItemCheck: 0,
+            re_fileFormatItemPinBodyCheck: 0,
+            re_fileFormatItemBlankCheck: 0,
+            re_fileFormatItemEndCheck: 0,
+        }
+    )
+    sourceFile = os.path.join(workPath, sourceFile)
+    # check_vcd_file(sourceFile, fileFormatCheckRegexDict)
+    vcdFileParse(sourceFile, re_vcdFileParseList)
+    endTime = time.time()
+    print(f"时间总共花费: {round(endTime-startTime, 3)} S")
