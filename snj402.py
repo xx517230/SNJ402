@@ -36,7 +36,6 @@ SNJ402 vcd文件转换思路
 <<        938| ffff>> 10 00 // 00000007
 """
 
-
 # 客供pattern核对所需的正则
 # << time      | ADR >> PP PP // SITE
 re_fileFormatCommentCheck = re.compile(r"^\/\/")  # 开头两行注释
@@ -62,41 +61,6 @@ re_fileFormatItemEndCheck = re.compile(
 # <<        438| xx00>> 00 00 // 00000003
 re_fileFormatBodyCheck = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+\s+//\s+.*?$")
 
-re_fileFormCheckRegexPlainStrDict = {
-    r"^\/\/"=False,
-    r"^<<\s+time\s+\|\s+ADR\s+>>\s+[a-zA-Z ]+\s+//\sSITE$"=False,
-    r"^<<\s+\.+\|\s+\.+>>\s+[a-zA-Z0-9_ ]+//\s+\.+$"=False,
-    r"^<<\s+\.+\|\s+\.+>>[ .]+//\s+\.+$"=False,
-    r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+\s+//\s+.*?$"=False,
-    r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+\s+//\s+.*?$",
-}
-
-'''
-re_fileFormatCommentCheck = re.compile(r"^\/\/")  # 开头两行注释
-# << time      | ADR >> PP PP // SITE
-re_fileFormatItemCheck = re.compile(
-    r"^<<\s+time\s+\|\s+ADR\s+>>\s+(?P<pinHead>[a-zA-Z ]+)\s+//\sSITE$"
-)
-# << ..........| ....>> AA BB // ..........
-re_fileFormatItemPinBodyCheck = re.compile(
-    r"^<<\s+\.+\|\s+\.+>>\s+(?P<pinBody>[a-zA-Z0-9_ ]+)//\s+\.+$"
-)
-# << ..........| ....>> .. .. // ..........
-re_fileFormatItemBlankCheck = re.compile(r"^<<\s+\.+\|\s+\.+>>[ .]+//\s+\.+$")
-
-"""
-<< ..........| ....>> ii ib // ..........
-<< ..........| ....>> 11 XX // wait about 1060 clock enter SLEEP
-"""
-re_fileFormatItemEndCheck = re.compile(
-    r"^<<\s+\.+\|\s+\.+>>\s+(?P<pattern>[a-zA-Z0-9 ]+)//\s+(?P<comment>[a-zA-Z0-9 ]+)$"
-)  # ... ... ... end
-
-# <<        438| xx00>> 00 00 // 00000003
-re_fileFormatBodyCheck = re.compile(
-    r"^<<\s+(?P<time>\d+)\|\s+\w+>>\s+(?P<pattern>[01HXLZz ]+)\s+//\s+(?P<comment>.*)?$"
-)
-'''
 
 
 # 获取当前目录
@@ -108,6 +72,13 @@ outputFile = r"I2C_Read_IDx.pat"
 # sourceFile = r"I2C_trim_32K.txt"
 # outputFile = r"I2C_trim_32K.pat"
 
+# 校验vcd
+
+with open(os.path.join(workPath, sourceFile), "r") as fp:
+    for lineCnt, line in enumerate(fp, start=1):
+        for checkDict in fileFormatCheckDict.values():
+
+        pass
 
 SOURCEFILE = open(os.path.join(workPath, sourceFile), "r")
 OUTPUTFILE = open(os.path.join(workPath, outputFile), "w")
