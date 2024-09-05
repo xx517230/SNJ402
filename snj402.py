@@ -68,9 +68,8 @@ re_fileFormatBodyCheck = re.compile(r"^<<\s+\d+\|\s+\w+>>\s+[01HXLZz ]+(?://\s+.
 
 # vcd 文件主体内容正则
 # << ..........| ....>> 11 XX // wait about 1060 clock enter SLEEP
-re_0TimingStatus = re.compile(
-    r"^<<\s+\.+\|\s+\.+>>\s+([a-zA-Z0-9 ]+)//([a-zA-Z0-9 ]+)$"
-)
+# re_0TimingStatus = re.compile(r"^<<\s+\.+\|\s+\.+>>\s+([01HXLZz ]+)//([a-zA-Z0-9 ]+)$")
+re_0TimingStatus = re.compile(r"^<<\s+\.+\|\s+\.+>>\s+([01HXLZz ]+)//([.a-zA-Z0-9 ]+)$")
 re_timingStatus = re.compile(r"^<<\s+(\d+)\|\s+\w+>>\s+([01HXLZz ]+)//(.*)?$")
 
 re_vcdFileParseList = [
@@ -83,8 +82,8 @@ if __name__ == "__main__":
     workPath = os.getcwd()
     # sourceFile = r"TPn_I2C_Read_IDx.txt"
     # outputFile = r"TPn_I2C_Read_IDx.pat"
-    sourceFile = r"TPn_I2C_program_220302.txt"
-    outputFile = r"TPn_I2C_program_220302.pat"
+    sourceFile = r"POR_0000.txt"
+    outputFile = r"POR_0000.pat"
     # sourceFile = r"TPn_I2C_trim_32K.txt"
     # outputFile = r"TPn_I2C_trim_32K.pat"
 
